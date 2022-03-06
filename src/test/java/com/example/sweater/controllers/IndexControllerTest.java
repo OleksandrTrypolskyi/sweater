@@ -5,18 +5,15 @@ import com.example.sweater.repositories.MessageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,6 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class IndexControllerTest {
 
+    public static final String INDEX = "/index";
+    public static final String FILTER = "/filter";
     @Mock
     private MessageRepository messageRepository;
     @InjectMocks
@@ -45,7 +44,7 @@ class IndexControllerTest {
     void index() throws Exception {
         when(messageRepository.findAll()).thenReturn(messages);
 
-        mockMvc.perform(get("/"))
+        mockMvc.perform(get(INDEX))
                 .andExpect(status().isOk())
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().attributeExists("messages"))
@@ -57,7 +56,7 @@ class IndexControllerTest {
         when(messageRepository.save(any())).thenReturn(message);
         when(messageRepository.findAll()).thenReturn(messages);
 
-        mockMvc.perform(post("/")
+        mockMvc.perform(post(INDEX)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("text", "text")
                         .param("tag", "tag"))
@@ -70,7 +69,7 @@ class IndexControllerTest {
     void findMessages() throws Exception {
         when(messageRepository.findAllByTextContainingIgnoreCase(any())).thenReturn(messages);
 
-        mockMvc.perform(post("/filter")
+        mockMvc.perform(post(FILTER)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("filter", "text"))
                 .andExpect(status().isOk())
@@ -85,7 +84,7 @@ class IndexControllerTest {
     void findMessagesWithEmptyParameter() throws Exception {
         when(messageRepository.findAll()).thenReturn(messages);
 
-        mockMvc.perform(post("/filter")
+        mockMvc.perform(post(FILTER)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("filter", ""))
                 .andExpect(status().isOk())

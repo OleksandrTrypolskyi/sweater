@@ -12,35 +12,38 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class IndexController {
 
+    public static final String INDEX = "/index";
+    public static final String MAIN = "main";
+    public static final String MESSAGES_ATTRIBUTE_NAME = "messages";
     private final MessageRepository messageRepository;
 
     public IndexController(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;
     }
 
-    @GetMapping("/")
+    @GetMapping(INDEX)
     public String index(Model model) {
-        model.addAttribute("messages", messageRepository.findAll());
-        return "main";
+        model.addAttribute(MESSAGES_ATTRIBUTE_NAME, messageRepository.findAll());
+        return MAIN;
     }
 
-    @PostMapping("/")
+    @PostMapping(INDEX)
     public String addMessage(@RequestParam String text,
                              @RequestParam String tag, Model model) {
         messageRepository.save(Message.builder().text(text).tag(tag).build());
-        model.addAttribute("messages", messageRepository.findAll());
-        return "main";
+        model.addAttribute(MESSAGES_ATTRIBUTE_NAME, messageRepository.findAll());
+        return MAIN;
     }
 
     @PostMapping("/filter")
     public String findMessages(@RequestParam String filter, Model model) {
         Iterable<Message> message;
         if(filter != null && !filter.isEmpty()) {
-            model.addAttribute("messages", messageRepository.findAllByTextContainingIgnoreCase(filter));
+            model.addAttribute(MESSAGES_ATTRIBUTE_NAME, messageRepository.findAllByTextContainingIgnoreCase(filter));
         } else {
-            model.addAttribute("messages", messageRepository.findAll());
+            model.addAttribute(MESSAGES_ATTRIBUTE_NAME, messageRepository.findAll());
         }
 
-        return "main";
+        return MAIN;
     }
 }

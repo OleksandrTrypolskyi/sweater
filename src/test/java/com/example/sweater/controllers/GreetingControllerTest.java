@@ -25,7 +25,7 @@ class GreetingControllerTest {
 
     @Test
     void getGreeting() throws Exception {
-        mockMvc.perform(get("/greeting"))
+        mockMvc.perform(get("/"))
                 .andExpect(model().attributeExists("name"))
                 .andExpect(view().name("greetingPage"));
     }
