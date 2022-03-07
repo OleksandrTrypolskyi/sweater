@@ -7,7 +7,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -24,8 +23,13 @@ public class IndexController {
     }
 
     @GetMapping(INDEX)
-    public String index(Model model) {
-        model.addAttribute(MESSAGES_ATTRIBUTE_NAME, messageRepository.findAll());
+    public String index(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
+        if (filter != null && !filter.isEmpty()) {
+            model.addAttribute(MESSAGES_ATTRIBUTE_NAME, messageRepository.findAllByTextContainingIgnoreCase(filter));
+        } else {
+            model.addAttribute(MESSAGES_ATTRIBUTE_NAME, messageRepository.findAll());
+        }
+        model.addAttribute("filter", filter);
         return MAIN;
     }
 
@@ -35,18 +39,6 @@ public class IndexController {
                              @RequestParam String tag, Model model) {
         messageRepository.save(Message.builder().text(text).tag(tag).author(user).build());
         model.addAttribute(MESSAGES_ATTRIBUTE_NAME, messageRepository.findAll());
-        return MAIN;
-    }
-
-    @PostMapping("/filter")
-    public String findMessages(@RequestParam String filter, Model model) {
-        Iterable<Message> message;
-        if (filter != null && !filter.isEmpty()) {
-            model.addAttribute(MESSAGES_ATTRIBUTE_NAME, messageRepository.findAllByTextContainingIgnoreCase(filter));
-        } else {
-            model.addAttribute(MESSAGES_ATTRIBUTE_NAME, messageRepository.findAll());
-        }
-
         return MAIN;
     }
 }

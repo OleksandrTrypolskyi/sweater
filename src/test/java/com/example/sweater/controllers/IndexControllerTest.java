@@ -24,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class IndexControllerTest {
 
     public static final String INDEX = "/index";
-    public static final String FILTER = "/filter";
     @Mock
     private MessageRepository messageRepository;
     @InjectMocks
@@ -69,11 +68,12 @@ class IndexControllerTest {
     void findMessages() throws Exception {
         when(messageRepository.findAllByTextContainingIgnoreCase(any())).thenReturn(messages);
 
-        mockMvc.perform(post(FILTER)
+        mockMvc.perform(get(INDEX)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("filter", "text"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("messages"))
+                .andExpect(model().attributeExists("filter"))
                 .andExpect(view().name("main"));
 
         verify(messageRepository, times(1)).findAllByTextContainingIgnoreCase(any());
@@ -84,11 +84,12 @@ class IndexControllerTest {
     void findMessagesWithEmptyParameter() throws Exception {
         when(messageRepository.findAll()).thenReturn(messages);
 
-        mockMvc.perform(post(FILTER)
+        mockMvc.perform(get(INDEX)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("filter", ""))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("messages"))
+                .andExpect(model().attributeExists("filter"))
                 .andExpect(view().name("main"));
 
         verify(messageRepository, times(1)).findAll();
