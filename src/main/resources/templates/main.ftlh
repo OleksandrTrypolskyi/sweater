@@ -46,5 +46,8 @@
     <div>
         <@login.logout/>
     </div>
+    <div>
+        <a href="/users">Users list</a>
+    </div>
 
 </@common.page>
