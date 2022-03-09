@@ -1,59 +1,60 @@
 <#import "parts/common.ftlh" as common>
-<#import "parts/login.ftlh" as login>
 
 <@common.page>
 
-    <div>
-        <div>Welcome to Sweater application</div>
-        <br>
-        <div>This application was developed during completion of course on YouTube channel: "LetsCode".</div>
-        <a href="https://www.youtube.com/watch?v=jH17YkBTpI4&list=PLU2ftbIeotGoGSEUf54LQH-DgiQPF2XRO&ab_channel=letsCode">
-            Spring Boot (Sweater App) - YouTube playlist.
-        </a><br>
-        <a href="https://github.com/OleksandrTrypolskyi/sweater">Github Repository</a>
-        <br><br><br>
-    </div>
-    <div>
-        <form method="post" enctype="multipart/form-data">
-            <input type="text" name="text" placeholder="Enter message">
-            <input type="text" name="tag" placeholder="Enter tag">
-            <input type="file" name="file">
-            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-            <button type="submit">Add message</button>
-        </form>
-        <br><br><br>
-    </div>
+    <form method="get" action="/index">
+        <div class="form-row">
+            <input type="text" name="filter" placeholder="Message text" value="${filter!}">
+            <button type="submit" class="btn btn-primary ml-2">Search</button>
+        </div>
+    </form>
 
-    <div>
-        <div>List of messages:</div>
-        <br>
-        <form method="get" action="/index">
-            <input type="text" name="filter" placeholder="Filter by message text" value="${filter!}">
-            <button type="submit">Find</button>
-        </form>
-        <#list messages as message>
-            <div>
-                <b>${message.id}</b>
-                <span>${message.text}</span>
-                <i>${message.tag}</i>
-                <strong>${message.authorName}</strong>
-                <div>
-                    <#if message.filename??>
-                        <img src="/img/${message.filename}">
-                    </#if>
+    <a class="btn btn-primary mt-3 mb-3" data-toggle="collapse" href="#collapseExample" role="button"
+       aria-expanded="false" aria-controls="collapseExample">
+        Add new Message
+    </a>
+    <div class="collapse mt-3" id="collapseExample">
+        <div class="form-group">
+            <form method="post" enctype="multipart/form-data">
+                <input type="text" name="text" placeholder="Enter message" class="form-control mb-2 col-sm-4">
+                <input type="text" name="tag" placeholder="Enter tag" class="form-control mb-2 col-sm-4">
+                <div class="custom-file mb-2 col-sm-4">
+                    <input type="file" name="file" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
                 </div>
-            </div>
-            <#else>
-            <div>No message</div>
-        </#list>
-        <br><br><br>
+                <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Add message</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div>
-        <@login.logout/>
-    </div>
-    <div>
-        <a href="/users">Users list</a>
+        <div>
+            <h3>List of messages</h3>
+        </div>
+
+        <div class="card-columns">
+            <#list messages as message>
+                <div class="card my-3">
+                    <#if message.filename??>
+                        <img class="card-img-top" src="/img/${message.filename}">
+                    </#if>
+                    <div class="m-2">
+                        <h5 class="card-title">${message.tag}</h5>
+                        <p class="card-text">${message.text}</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        ${message.authorName}
+                    </div>
+                </div>
+            <#else>
+                <div>No message</div>
+            </#list>
+        </div>
+
+        <br><br><br>
     </div>
 
 </@common.page>

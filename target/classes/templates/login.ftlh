@@ -3,6 +3,5 @@
 
 <@common.page>
     <h1>Login page</h1>
-    <@login.login "/login"/>
-    <a href="/registration">Add new user</a>
+    <@login.login "/login" false/>
 </@common.page>
