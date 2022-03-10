@@ -56,7 +56,8 @@ class IndexControllerTest {
         when(messageRepository.findAll()).thenReturn(messages);
 
         mockMvc.perform(post(INDEX)
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .content("")
                         .param("text", "text")
                         .param("tag", "tag"))
                 .andExpect(status().isOk())

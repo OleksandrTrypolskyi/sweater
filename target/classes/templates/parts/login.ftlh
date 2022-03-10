@@ -4,6 +4,12 @@
             <label>User name</label>
             <input type="text" name="username" class="form-control col-sm-4" placeholder="user name"/>
         </div>
+        <#if isRegisterForm>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" name="email" class="form-control col-sm-4" placeholder="email"/>
+            </div>
+        </#if>
         <div class="form_group">
             <label>Password</label>
             <input type="password" name="password" class="form-control col-sm-4" placeholder="password"/>

@@ -1,7 +1,7 @@
 package com.example.sweater.controllers;
 
 import com.example.sweater.domain.User;
-import com.example.sweater.repositories.UserRepository;
+import com.example.sweater.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -26,7 +25,7 @@ class RegistrationControllerTest {
     private RegistrationController registrationController;
 
     @Mock
-    UserRepository userRepository;
+    UserService userService;
     private MockMvc mockMvc;
     private User user;
 
@@ -49,8 +48,7 @@ class RegistrationControllerTest {
 
     @Test
     void addUserSuccessful() throws Exception {
-        when(userRepository.findByUsername(anyString())).thenReturn(null);
-        when(userRepository.save(any())).thenReturn(user);
+        when(userService.addUser(any())).thenReturn(true);
 
         mockMvc.perform(post("/registration")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -62,7 +60,7 @@ class RegistrationControllerTest {
 
     @Test
     void addUserWhenUserExists() throws Exception {
-        when(userRepository.findByUsername(anyString())).thenReturn(user);
+        when(userService.addUser(any())).thenReturn(false);
 
         mockMvc.perform(post("/registration")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -71,7 +69,5 @@ class RegistrationControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("message"))
                 .andExpect(view().name("registrationPage"));
-
-        verify(userRepository, times(0)).save(any());
     }
 }
