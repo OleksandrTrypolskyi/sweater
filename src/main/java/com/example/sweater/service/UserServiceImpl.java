@@ -5,6 +5,7 @@ import com.example.sweater.domain.User;
 import com.example.sweater.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,10 +16,12 @@ import java.util.stream.StreamSupport;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final MailSenderService mailSenderService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, MailSenderService mailSenderService) {
+    public UserServiceImpl(UserRepository userRepository, MailSenderService mailSenderService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.mailSenderService = mailSenderService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -38,6 +41,7 @@ public class UserServiceImpl implements UserService {
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.USER));
         user.setActivationCode(UUID.randomUUID().toString());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
         sendMessage(user);
